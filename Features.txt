@@ -1,0 +1,73 @@
+FEATURE 1:
+
+Algorithm 1 High-level Server Logic for broadcast feature
+1: Create a TCP server socket and bind it to an IP address and port
+2: Start listening for incoming client connections
+3: Initialize an empty list to store connected clients
+4: while server is running do
+    5: Accept a new client connection
+    6: Add the client to the list of active clients
+    7: Start a new thread to handle communication with that client
+8: end while
+
+9: Client Handler (in each thread):
+10: Continuously receive messages from the assigned client
+11: For each received message, forward it to all other connected clients
+12: If the client disconnects, close the connection and remove it from the list
+
+
+Algorithm 2 High-level Client Logic for broadcast application
+1: Create a TCP client socket
+2: Connect to the server using the server’s IP address and port
+3: Display the client’s local address and port information
+4: Start a background thread to continuously:
+    • Receive incoming messages from the server
+    • Display received messages to the user
+5: In the main thread, repeatedly:
+    • Accept user input from the keyboard
+    • Send the typed message to the server
+6: If the server disconnects or an error occurs, close the connection
+
+
+FEATURE 2:
+
+Algorithm 3 High-level Server Logic for One-to-One Chat (Feature 2)
+1: Create a TCP server socket and bind it to an IP address and port
+2: Start listening for incoming client connections
+3: Initialize an empty dictionary to store each client’s username and socket
+4: while server is running do
+    5: Accept a new client connection
+    6: Request and receive the client’s username
+    7: Add the username–socket pair to the dictionary
+    8: Start a new thread to handle communication with that client
+9: end while
+
+10: Client Handler (in each thread):
+11: while the client is connected do
+    12: Wait to receive a message from the client
+    13: if message starts with @target then
+        14: Extract the target username and message text
+        15: if target username exists in the client dictionary then
+            16: Send the message only to that specific target client
+        17: else
+            18: Inform the sender that the target user was not found
+        19: end if
+    20: else
+        21: Inform the sender to use the correct format (@username message)
+    22: end if
+23: end while
+24: When the client disconnects, remove it from the dictionary
+
+Algorithm 4 High-level Client Logic for One-to-One Chat (Feature 2)
+1: Create a TCP client socket
+2: Connect to the server using the provided IP address and port
+3: Wait for the server to request a username
+4: Input the username from the user and send it to the server
+5: Start a background thread to continuously:
+    • Receive incoming messages from the server
+    • Display the received messages to the user
+6: In the main thread, repeatedly:
+    • Accept user input from the keyboard
+    • To send a private message, type in the format @username message
+    • Send the message to the server for delivery to the target user
+7: If the server disconnects or an error occurs, close the socket connection
