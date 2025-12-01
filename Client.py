@@ -19,12 +19,14 @@ print(f"Server's local address: {local_address}, Port: {local_port}")
      # - Display received messages to the user
 
 def background_thread():
-    while True:
+     while True:
         data = clientSocket.recv(1024)
+
         if not data:
-            print("Server disconnected/Error Occured") # 6. If the server disconnects or an error occurs, close the connection
-            break
-        print("From Server:", data.decode())
+            print("Server disconnected/Error occurred")
+            clientSocket.close()
+
+        print("\nFrom Server:", data.decode())
 
 
 thread = threading.Thread(target=background_thread, daemon=True)
