@@ -1,3 +1,4 @@
+import threading
 from socket import *
 
 # 1. Create a TCP server socket and bind it to an IP address and port
@@ -18,10 +19,24 @@ connectedClients = []
     #Start a new thread to handle communication with that client
     #end while
 
+def background_thread():
+    while True:
+        sentence = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
+
+        for c in connectedClients:
+            c.send(sentence.encode()) # sends back to the client
+
+        if not sentence:
+            print("Server disconnected/Error Occured") # 6. If the server disconnects or an error occurs, close the connection
+            break
+        print("From Server:", sentence)
+    
+
 while True: #always welcoming
     connectionSocket, addr = serverSocket.accept() #When a client knocks on this door, the program invokes the method for serverSocket,
+    connectedClients.append(connectionSocket)
+    
+    thread = threading.Thread(target=background_thread, daemon=True)
+    thread.start()
     #which creates a new socket in the server, called , dedicated to this particular client.
-    sentence = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
-    capitalizedSentence = sentence.upper() #converts to an UPPERCASE
-    connectionSocket.send(capitalizedSentence.encode()) # sends back to the client
     connectionSocket.close() #connection closes 
