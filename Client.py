@@ -1,12 +1,44 @@
 from socket import *
-serverName = "127.0.0.1" #or local host
-"127.0.0.1"#"192.168.1.2"#'hostname'#server's IP address (precisely IPv4)'servername'
-serverPort = 12000 #un-reserved port #
-clientSocket = socket(AF_INET, SOCK_STREAM) #creates client side TCP socket
-clientSocket.connect((serverName,serverPort)) # initiates TCP connection . After this line is executed, three-way handshake is performed and a
-# TCP connection is established
-sentence = input('Input lowercase sentence:') #reads the string from client side user
-clientSocket.send(sentence.encode()) # this line encodes and sends the string
-modifiedSentence = clientSocket.recv(1024) # the string is received here after getting modified from server. recv() method receives data from a socket and stores it in a buffer
-print('From Server: ', modifiedSentence.decode()) # the string (now in UPPERCASE) is received from server, and decoded.
-clientSocket.close() # this closes the socket Annotations
+import threading
+
+serverName = "127.0.0.1"  # or local host
+serverPort = 12000        # un-reserved port
+
+# 1. Create a TCP client socket
+clientSocket = socket(AF_INET, SOCK_STREAM)
+
+# 2. Connect to the server using the server's IP address and port
+clientSocket.connect((serverName, serverPort))  # TCP connection established
+
+# 3. Display the clients local address and port information
+local_address, local_port = clientSocket.getsockname()
+print(f"Server's local address: {local_address}, Port: {local_port}")
+
+# 4. Start a background thread to continuously:
+     # - Receive incoming messages from the server
+     # - Display received messages to the user
+
+def background_thread():
+    while True:
+        data = clientSocket.recv(1024)
+        if not data:
+            print("Server disconnected/Error Occured") # 6. If the server disconnects or an error occurs, close the connection
+            break
+        print("From Server:", data.decode())
+
+
+thread = threading.Thread(target=background_thread, daemon=True)
+thread.start()
+
+# 5. In the main thread, repeatedly:
+     # - Accept user input from the keyboard
+     # - Send the typed message to the server
+while True:
+    message = input("Input Message: ")
+    clientSocket.send(message.encode())
+
+
+# 6. If the server disconnects or an error occurs, close the connection
+
+clientSocket.close()  # close the socket
+
