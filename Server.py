@@ -26,11 +26,13 @@ def background_thread(connectionSocket, addr):
             sentence = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
         except ConnectionResetError: #Chekcs if client disccoencted from ctrl C, for example
             print("Client Disconnected!")
+            connectedClients.remove(connectionSocket)
+            connectionSocket.close() #connection closes 
             break
         
         if not sentence:
             print("Client disconnected/Error Occured")
-            connectedClients.pop(connectedClients.index(connectionSocket))
+            connectedClients.remove(connectionSocket)
             connectionSocket.close() #connection closes 
             break
 
