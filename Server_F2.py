@@ -42,12 +42,14 @@ def background_thread(connectionSocket, addr):
             user = sentence.rsplit("|")
             if keys.count(user) >= 1:
                 socket = connectedClients.get(user)
-                socket.send(sentence.encode) #FIXME
+                socket.send(sentence.encode()) #FIXME
             else:
-                connectionSocket.send("Client not found".encode)
+                s = "Client not found"
+                connectionSocket.send(s.encode())
                 break
         else:
-            connectionSocket.send("Missing @username; please use the correct format")
+            s = "Missing @username; please use the correct format"
+            connectionSocket.send(s.encode())
             break
 
 
@@ -64,10 +66,10 @@ def background_thread(connectionSocket, addr):
 while True: #always welcoming
     connectionSocket, addr = serverSocket.accept() #When a client knocks on this door, the program invokes the method for serverSocket,
     s = "Input username: "
-    request = connectionSocket.send(s.encode)
+    connectionSocket.send(s.encode())
     username = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
 
-    connectedClients.update(username, connectionSocket)
+    connectedClients.update({username: connectionSocket})
 
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
