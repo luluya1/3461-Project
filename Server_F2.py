@@ -14,6 +14,7 @@ print('The server is ready to receive') # printing to confirm that TCP server is
 
 # 3. Initialize an empty dictionary to store connected clients
 connectedClients = {}
+usernames = ()
 
 # 5. Client Handler (in each thread):
     # - Continuously receive messages from the assigned client
@@ -36,11 +37,11 @@ def background_thread(connectionSocket, addr):
             connectionSocket.close() #connection closes 
             break
 
-        keys = connectedClients.keys
 
         if(sentence.startswith("@")):
             user = sentence.rsplit("|")
-            if keys.count(user) >= 1:
+            num = username.count(user)
+            if num >= 1:
                 socket = connectedClients.get(user)
                 socket.send(sentence.encode()) #FIXME
             else:
@@ -53,8 +54,8 @@ def background_thread(connectionSocket, addr):
             break
 
 
-        #for c in connectedClients:
-        #    c.send(sentence.encode()) # sends back to the client
+        for c in connectedClients:
+           c.send(sentence.encode()) # sends back to the client
 
     connectionSocket.close()
 
@@ -70,6 +71,7 @@ while True: #always welcoming
     username = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
 
     connectedClients.update({username: connectionSocket})
+    usernames.append(username)
 
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
