@@ -14,7 +14,7 @@ print('The server is ready to receive') # printing to confirm that TCP server is
 
 # 3. Initialize an empty dictionary to store connected clients
 connectedClients = {}
-usernames = ()
+usernames = []
 
 # 5. Client Handler (in each thread):
     # - Continuously receive messages from the assigned client
@@ -40,9 +40,10 @@ def background_thread(connectionSocket, addr):
 
         if(sentence.startswith("@")):
             user = sentence.rsplit("|")
-            num = username.count(user)
+            print("BOO", user[0])
+            num = usernames.count(user[0])
             if num >= 1:
-                socket = connectedClients.get(user)
+                socket = connectedClients.get(user[0])
                 socket.send(sentence.encode()) #FIXME
             else:
                 s = "Client not found"
