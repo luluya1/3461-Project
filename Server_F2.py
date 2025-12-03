@@ -27,20 +27,27 @@ def background_thread(connectionSocket, addr):
             sentence = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
         except ConnectionResetError: #Chekcs if client disccoencted from ctrl C, for example
             print("Client Disconnected!")
-            connectedClients.remove(connectionSocket)
+
+            for u in username:
+                socket = connectedClients.get(u)
+                if socket == connectionSocket:
+                    connectedClients.pop(u)
+
             connectionSocket.close() #connection closes 
             break
         
         if not sentence:
             print("Client disconnected/Error Occured")
-            connectedClients.remove(connectionSocket)
+            for u in username:
+                socket = connectedClients.get(u)
+                if socket == connectionSocket:
+                    connectedClients.pop(u)
             connectionSocket.close() #connection closes 
             break
 
 
         if(sentence.startswith("@")):
             user = sentence.rsplit("|")
-            print("BOO", user[0])
             num = usernames.count(user[0])
             if num >= 1:
                 socket = connectedClients.get(user[0])
@@ -52,11 +59,10 @@ def background_thread(connectionSocket, addr):
         else:
             s = "Missing @username; please use the correct format"
             connectionSocket.send(s.encode())
-            break
 
 
-        for c in connectedClients:
-           c.send(sentence.encode()) # sends back to the client
+        #for c in connectedClients:
+        #   c.send(sentence.encode()) # sends back to the client
 
     connectionSocket.close()
 
