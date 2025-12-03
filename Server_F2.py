@@ -12,8 +12,8 @@ serverSocket.bind(('',serverPort)) # bind() method associates a server socket wi
 serverSocket.listen(1) #this line means server listens for the TCP connection req.
 print('The server is ready to receive') # printing to confirm that TCP server is up and ready
 
-# 3. Initialize an empty list to store connected clients
-connectedClients = []
+# 3. Initialize an empty dictionary to store connected clients
+connectedClients = {}
 
 # 5. Client Handler (in each thread):
     # - Continuously receive messages from the assigned client
@@ -36,8 +36,23 @@ def background_thread(connectionSocket, addr):
             connectionSocket.close() #connection closes 
             break
 
-        for c in connectedClients:
-            c.send(sentence.encode()) # sends back to the client
+        keys = connectedClients.keys
+
+        if(sentence.startswith("@")):
+            user = sentence.rsplit("|")
+            if keys.count(user) >= 1:
+                socket = connectedClients.get(user)
+                socket.send(sentence.encode) #FIXME
+            else:
+                connectionSocket.send("Client not found".encode)
+                break
+        else:
+            connectionSocket.send("Missing @username; please use the correct format")
+            break
+
+
+        #for c in connectedClients:
+        #    c.send(sentence.encode()) # sends back to the client
 
     connectionSocket.close()
 
@@ -48,7 +63,11 @@ def background_thread(connectionSocket, addr):
     #end while
 while True: #always welcoming
     connectionSocket, addr = serverSocket.accept() #When a client knocks on this door, the program invokes the method for serverSocket,
-    connectedClients.append(connectionSocket)
+    s = "Input username: "
+    request = connectionSocket.send(s.encode)
+    username = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
+
+    connectedClients.update(username, connectionSocket)
 
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
