@@ -6,7 +6,7 @@ from socket import *
 # 1. Create a TCP server socket and bind it to an IP address and port
 serverPort = 12000
 serverSocket = socket(AF_INET,SOCK_STREAM) #creating a server side socket
-serverSocket.bind(('',serverPort)) # bind() method associates a server socket with a specific address and port on the local machine
+serverSocket.bind(('172.20.10.3',serverPort)) # bind() method associates a server socket with a specific address and port on the local machine
 
 # 2. Start listening for incoming client connections
 serverSocket.listen(1) #this line means server listens for the TCP connection req.

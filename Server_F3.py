@@ -56,7 +56,13 @@ def background_thread(connectionSocket, addr):
                 s = "Client not found"
                 connectionSocket.send(s.encode())
         elif(sentence.startswith("#")):
-            print("hi")
+            starter = sentence.split()[0]
+            groupchat_name = sentence[1:]
+
+            print(starter)
+            print(groupchat_name)
+
+            print("Created Groupchat")
 
         else:
             s = "Missing @username or #groupchat; please use the correct format"
