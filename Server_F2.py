@@ -80,7 +80,6 @@ while True: #always welcoming
 
     connectedClients.update({username: connectionSocket})
     usernames.append(username)
-    print(usernames)
 
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
