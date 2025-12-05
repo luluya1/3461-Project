@@ -55,8 +55,11 @@ def background_thread(connectionSocket, addr):
             else:
                 s = "Client not found"
                 connectionSocket.send(s.encode())
+        elif(sentence.startswith("#")):
+            print("hi")
+
         else:
-            s = "Missing @username; please use the correct format"
+            s = "Missing @username or #groupchat; please use the correct format"
             connectionSocket.send(s.encode())
 
 
