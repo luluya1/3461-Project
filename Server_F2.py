@@ -28,20 +28,22 @@ def background_thread(connectionSocket, addr):
         except ConnectionResetError: #Chekcs if client disccoencted from ctrl C, for example
             print("Client Disconnected!")
 
-            for u in username:
+            for u in usernames:
                 socket = connectedClients.get(u)
                 if socket == connectionSocket:
                     connectedClients.pop(u)
+                    usernames.remove(u)
 
             connectionSocket.close() #connection closes 
             break
         
         if not sentence:
             print("Client disconnected/Error Occured")
-            for u in username:
+            for u in usernames:
                 socket = connectedClients.get(u)
                 if socket == connectionSocket:
                     connectedClients.pop(u)
+                    usernames.remove(u)
             connectionSocket.close() #connection closes 
             break
 
@@ -78,6 +80,7 @@ while True: #always welcoming
 
     connectedClients.update({username: connectionSocket})
     usernames.append(username)
+    print(usernames)
 
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
