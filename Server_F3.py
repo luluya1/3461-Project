@@ -47,11 +47,16 @@ def background_thread(connectionSocket, addr):
 
 
         if(sentence.startswith("@")):
-            user = sentence.rsplit("|")
-            num = usernames.count(user[0])
+            list1 = sentence.split()
+            user = list1.pop(0)
+            #user = sentence.rsplit("|")
+            num = usernames.count(user)
             if num >= 1:
-                socket = connectedClients.get(user[0])
-                socket.send(sentence.encode()) #FIXME
+                socket = connectedClients.get(user)
+                seperator = " "
+                message = seperator.join(list1)
+                #msg = f"Private message from {user}: {message}"
+                socket.send(message.encode())
             else:
                 s = "Client not found"
                 connectionSocket.send(s.encode())
