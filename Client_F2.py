@@ -15,11 +15,18 @@ local_address, local_port = clientSocket.getsockname()
 print(f"Server's local address: {local_address}, Port: {local_port}")
 
 # 4. Input the username from the user and send it to the server
-data = clientSocket.recv(1024)
+data = clientSocket.recv(1024)          #"Input Username: "
 print(data.decode()) #TEST
 username = input()
-print(f"Your username is set to: @{username}") #TEST
 clientSocket.send(username.encode())
+errorMsg = data.decode().split().pop(0)      #msg from user. May be an error message, hence...
+
+while(errorMsg == "Error: "):
+    username = input()
+    clientSocket.send(username.encode())
+    
+    
+print(f"Your username is set to: {username}") #TEST
 
 # 5. Start a background thread to continuously:
      # - Receive incoming messages from the server

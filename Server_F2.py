@@ -46,8 +46,6 @@ def background_thread(connectionSocket, addr):
                     usernames.remove(u)
             connectionSocket.close() #connection closes 
             break
-
-
         
         if(sentence.startswith("@")):
             list1 = sentence.split()
@@ -84,11 +82,28 @@ while True: #always welcoming
     connectionSocket.send(s.encode())
     username = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
 
-    if(usernames.count(username) > 0):
-        connectionSocket.send("Username already exists. ".encode())
-    else:
-        connectedClients.update({username: connectionSocket})
-        usernames.append(username)
+    while(username[:1] != "@"):
+        try:
+            connectionSocket.send("Error: Missing @.\nInput Username: ".encode())
+            username = connectionSocket.recv(1024).decode()
+        except ConnectionResetError:
+            print("Client Disconnected!")
+            #connectionSocket.close()
+            break
+
+
+    while(usernames.count(username) > 0):
+        try:
+            connectionSocket.send("Error: Username already exists.\nInput Username: ".encode())
+            username = connectionSocket.recv(1024).decode()
+        except ConnectionResetError:
+            print("Client Disconnected!")
+            #connectionSocket.close()
+            break
+       
+
+    connectedClients.update({username: connectionSocket})
+    usernames.append(username)
 
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
