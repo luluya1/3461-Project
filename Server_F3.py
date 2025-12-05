@@ -1,6 +1,7 @@
 from sys import set_coroutine_origin_tracking_depth
 import threading
 from socket import *
+from tokenize import group
 
 
 # 1. Create a TCP server socket and bind it to an IP address and port
@@ -66,6 +67,20 @@ def background_thread(connectionSocket, addr):
             groupchat_name = list2.pop(0)
             gcs.update({groupchat_name: list2})
             print("Created Groupchat: ", groupchat_name)
+
+        elif(sentence.startswith("$")):
+            list3 = sentence.split()
+            groupchat_name = list3.pop(0)
+            groupchat_name = groupchat_name[1:]
+            seperator = " "
+            message = seperator.join(list3)
+            
+            print("Sending message to groupchat: ", groupchat_name)
+            
+            
+            #members = gcs.get(groupchat_name)
+                
+
 
         else:
             s = "Missing @username or #groupchat; please use the correct format"
