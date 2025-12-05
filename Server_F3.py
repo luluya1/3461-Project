@@ -78,7 +78,13 @@ def background_thread(connectionSocket, addr):
             print("Sending message to groupchat: ", groupchat_name)
             
             
-            #members = gcs.get(groupchat_name)
+            members = gcs.get(groupchat_name)
+            
+            for m in members:
+                socket = connectedClients.get(m)
+                socket.send(message.encode())
+
+                
                 
 
 
