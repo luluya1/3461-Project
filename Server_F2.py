@@ -84,8 +84,11 @@ while True: #always welcoming
     connectionSocket.send(s.encode())
     username = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
 
-    connectedClients.update({username: connectionSocket})
-    usernames.append(username)
+    if(usernames.count(username) > 0):
+        connectionSocket.send("Username already exists. ".encode())
+    else:
+        connectedClients.update({username: connectionSocket})
+        usernames.append(username)
 
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
