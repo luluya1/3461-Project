@@ -112,6 +112,26 @@ while True: #always welcoming
     connectedClients.update({username: connectionSocket})
     usernames.append(username)
 
+    while(username[:1] != "@"):
+        try:
+            connectionSocket.send("Error: Missing @.\nInput Username: ".encode())
+            username = connectionSocket.recv(1024).decode()
+        except ConnectionResetError:
+            print("Client Disconnected!")
+            #connectionSocket.close()
+            break
+
+
+    while(usernames.count(username) > 0):
+        try:
+            connectionSocket.send("Error: Username already exists.\nInput Username: ".encode())
+            username = connectionSocket.recv(1024).decode()
+        except ConnectionResetError:
+            print("Client Disconnected!")
+            #connectionSocket.close()
+            break
+       
+
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
 
