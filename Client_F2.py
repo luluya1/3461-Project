@@ -40,7 +40,7 @@ def background_thread():
             print("Server disconnected/Error occurred")
             clientSocket.close()
 
-        print("\nFrom Server:", data.decode())
+        print(data.decode())
 
 
 thread = threading.Thread(target=background_thread, daemon=True)

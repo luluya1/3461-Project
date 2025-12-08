@@ -21,7 +21,7 @@ usernames = []
     # - For each received message, forward it to all other connected clients
     # - If the client disconnects, close the connection and remove it from the list
 
-def background_thread(connectionSocket, addr):
+def background_thread(connectionSocket, u):
     while True:
         try:
             sentence = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
@@ -56,8 +56,8 @@ def background_thread(connectionSocket, addr):
                 socket = connectedClients.get(user)
                 seperator = " "
                 message = seperator.join(list1)
-                #msg = f"Private message from {user}: {message}"
-                socket.send(message.encode())
+                msg = f"\nPrivate message from {u}: {message}\nInput Message:"
+                socket.send(msg.encode())
             else:
                 s = "Client not found"
                 connectionSocket.send(s.encode())
@@ -105,6 +105,6 @@ while True: #always welcoming
     connectedClients.update({username: connectionSocket})
     usernames.append(username)
 
-    thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
+    thread = threading.Thread(target=background_thread, args=(connectionSocket, username), daemon=True)
     thread.start()
 
