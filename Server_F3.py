@@ -30,10 +30,22 @@ def background_thread(connectionSocket, addr):
         except ConnectionResetError: #Chekcs if client disccoencted from ctrl C, for example
             print("Client Disconnected!")
 
+            #Removes from groupchats
+            for group in gcs:
+                for member in gcs.get(group):
+                    socket = connectedClients.get(member)
+                    if socket == connectionSocket:
+                        print("Removed memeber from groupchat: ", member, group)
+                        gcs.get(group).remove(member)
+
+
+            #Removes from lists of usernames
             for u in username:
                 socket = connectedClients.get(u)
                 if socket == connectionSocket:
                     connectedClients.pop(u)
+
+
 
             connectionSocket.close() #connection closes 
             break
@@ -109,8 +121,6 @@ while True: #always welcoming
     connectionSocket.send(s.encode())
     username = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
 
-    connectedClients.update({username: connectionSocket})
-    usernames.append(username)
 
     while(username[:1] != "@"):
         try:
@@ -131,6 +141,8 @@ while True: #always welcoming
             #connectionSocket.close()
             break
        
+    connectedClients.update({username: connectionSocket})
+    usernames.append(username)
 
     thread = threading.Thread(target=background_thread, args=(connectionSocket, addr), daemon=True)
     thread.start()
