@@ -82,24 +82,18 @@ while True: #always welcoming
     connectionSocket.send(s.encode())
     username = connectionSocket.recv(1024).decode() #receives 'string' from client, and decodes it first
 
-    while(username[:1] != "@"):
-        try:
-            connectionSocket.send("Error: Missing @.\nInput Username: ".encode())
-            username = connectionSocket.recv(1024).decode()
-        except ConnectionResetError:
-            print("Client Disconnected!")
-            #connectionSocket.close()
-            break
-
-
-    while(usernames.count(username) > 0):
-        try:
-            connectionSocket.send("Error: Username already exists.\nInput Username: ".encode())
-            username = connectionSocket.recv(1024).decode()
-        except ConnectionResetError:
-            print("Client Disconnected!")
-            #connectionSocket.close()
-            break
+    while(username[:1] != "@" or usernames.count(username) > 0):
+            try:
+                if username[:1] != "@":
+                    connectionSocket.send("Error: Missing @. Input Username: ".encode())
+                else:
+                    connectionSocket.send("Error: Username already exists. Input Username: ".encode())
+                
+                username = connectionSocket.recv(1024).decode()
+            except ConnectionResetError:
+                print("Client Disconnected!")
+                #connectionSocket.close()
+                break
        
 
     connectedClients.update({username: connectionSocket})

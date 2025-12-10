@@ -24,6 +24,8 @@ errorMsg = data.decode().split().pop(0)      #msg from user. May be an error mes
 while(errorMsg == "Error: "):
     username = input()
     clientSocket.send(username.encode())
+    errorMsg = data.decode().split().pop(0)      #msg from user. May be an error message, hence...
+
     
     
 print(f"Your username is set to: {username}") #TEST
